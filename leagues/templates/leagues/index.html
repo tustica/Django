@@ -12,6 +12,78 @@
 				<p>No leagues found.  Try <code>python manage.py loaddata data.json</code>, or, if that doesn't work, going <a href="{% url 'make_data' %}">here</a> (but be prepared to wait).</p>
 			{% endfor %}
 		</ol>
+		<h2>Leagues in Atlantic Soccer Conference</h2>
+		<ol>
+			{% for team in teams %}
+				{% if team.league.name == "Atlantic Soccer Conference" %}
+					<li>{{team.team_name}}</li>
+				{% endif %}
+			{% endfor %}
+		</ol>
+		<h2>All Players on Boston Penguins</h2>
+		<ol>
+			{% for player in penguins.curr_players.all %}
+				<li>{{player.first_name}} {{player.last_name}}</li>
+			{% endfor %}
+		</ol>
+		<h2>All Teams with player name Sophia</h2>
+		<ol>
+			{% for team in teams %}
+				{% for player in team.curr_players.all %}
+					{% if player.first_name == "Sophia" %}
+						<li>{{team.team_name}}</li>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+		</ol>
+		<h2>Last Name Flores that doesn't play for the roughriders</h2>
+		<ol>
+			{% for team in teams %}
+				{% if team.team_name == "Roughriders" %}
+					{% for player in team.curr_players.all %}
+						{% if player.last_name == "Flores" %}
+							<li>{{player.first_name}} {{player.last_name}}</li>
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+			{% endfor %}
+		</ol>
+		<h2>...all players who were formerly (but aren't currently) with the Wichita Vikings</h2>
+		<ol>
+			{% for team in teams %}
+				{% if team.team_name == "Vikings" %}
+					{% for player in team.all_players.all %}
+						{% if player not in team.curr_players.all %}
+							<li>{{player.first_name}} {{player.last_name}} is currently playing for the {{player.curr_team.team_name}}</li>
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+			{% endfor %}
+		</ol>
+		<h2>...all teams that have had 12 or more players, past and present. (HINT: Look up the Django annotate function.</h2>
+		<ol>
+			{% for team in count_of_players %}
+				{% if team.all_players__count > 12 %}
+					<li>{{team.team_name}}</li>
+				{% endif %}
+			{% endfor %}
+		</ol>
+		<h2>...all players and count of teams they played for, sorted by number of teams they played for</h2>
+		<ol>
+			{% for player in count_of_teams|dictsortreversed:"countnum" %}
+				<li>{{player.first_name}} {{player.last_name}}: {{player.countnum}}</li>
+			{% endfor %}
+		</ol>
+		<h2>All Football Players</h2>
+		<ol>
+			{% for league in football_leagues %}
+				{% for team in league.teams.all %}
+					{% for player in team.all_players.all %}
+						<li>{{player.first_name}} {{player.last_name}}</li>
+					{% endfor %}
+				{% endfor %}
+			{% endfor %}
+		</ol>
 		<h1>Teams</h1>
 		<ol>
 			{% for team in teams %}
@@ -20,12 +92,54 @@
 				<p>No teams found.  Try <code>python manage.py loaddata data.json</code>, or, if that doesn't work, going <a href="{% url 'make_data' %}">here</a> (but be prepared to wait).</p>
 			{% endfor %}
 		</ol>
+		<h2>Dallas Teams</h2>
+			<ol>
+				{% for team in dallas_teams %}
+					<li>{{team.team_name}}</li>
+				{% endfor %}
+			</ol>
+		<h2>Teams that begin with T</h2>
+			<ol>
+				{% for team in teams %}
+					{% if team.team_name|first == "T" %}
+						<li>{{team.team_name}}</li>
+					{% endif %}
+				{% endfor %}
+			</ol>
+		<h2>Teams ordered alphabetically</h2>
+			<ol>
+				{% for team in teams|dictsort:"team_name" %}
+					<li>{{team.team_name}}</li>
+				{% endfor %}
+			</ol>
+		<h2>Teams ordered reverse alphabetically</h2>
+			<ol>
+				{% for team in teams|dictsortreversed:"team_name" %}
+					<li>{{team.team_name}}</li>
+				{% endfor %}
+			</ol>
 		<h1>Players</h1>
 		<ol>
 			{% for player in players %}
 				<li>{{player.first_name}} {{player.last_name}}</li>
 			{% empty %}
 				<p>No teams found.  Try <code>python manage.py loaddata data.json</code>, or, if that doesn't work, going <a href="{% url 'make_data' %}">here</a> (but be prepared to wait).</p>
+			{% endfor %}
+		</ol>
+		<h2>Players with last name Cooper</h2>
+		<ol>
+			{% for player in players %}
+				{% if player.last_name == "Cooper" %}
+					<li>{{player.first_name}} {{player.last_name}}</li>
+				{% endif %}
+			{% endfor %}
+		</ol>
+		<h2>Players with last name Cooper except when first name is Joshua</h2>
+		<ol>
+			{% for player in players %}
+				{% if player.last_name == "Cooper" and not player.first_name == "Joshua" %}
+					<li>{{player.first_name}} {{player.last_name}}</li>
+				{% endif %}
 			{% endfor %}
 		</ol>
 	</body>
